@@ -14,8 +14,8 @@ This addon can be installed as any other regular Odoo addon:
   for *Rave Payment Acquirer*. Click *Install* button on the addon.
 
 .. image:: odoo-rave.png
-:alt: Payment Acquirers view in Odoo.
-:class: img-responsive img-thumbnail
+    :alt: Payment Acquirers view in Odoo.
+    :class: img-responsive img-thumbnail
 
 .. note:: You you would like to use the payment acquirer in the eCommerce shop,
     make sure the *eCommerce* module (*website_sale*) is installed as well.
@@ -53,7 +53,7 @@ Now, let's configure the payment acquirer:
 - In the *Credentials* tab, enter the Public and Secret key from Rave 
   *API credentials* section noted earlier:
 
-.. image:: odoo-rave-activate.png
+.. image:: rave-activate.png
    :alt: Rave payment acquirers credentials configuration.
    :class: img-responsive img-thumbnail
 
