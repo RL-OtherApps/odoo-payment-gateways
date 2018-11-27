@@ -5,6 +5,8 @@
     'category': 'eCommerce',
     'summary': 'Payment Acquirer:Flutterwave Rave Implementation',
     'version': '1',
+    'license': 'AGPL-3',
+    'author': 'Flutterwave Technology Solutions',
     'website': 'https://rave.flutterwave.com/',
     'description': """Flutterwave Rave Payment Acquirer""",
     'depends': ['payment','website'],
