@@ -7,7 +7,6 @@
             <field name="provider">rave</field>
             <field name="company_id" ref="base.main_company"/>
             <field name="view_template_id" ref="rave_form"/>
-            <!-- <field name="registration_view_template_id" ref="stripe_s2s_form"/> -->
             <field name="environment">test</field>
             <field name="pre_msg"><![CDATA[
                 <p>You will be prompted with Rave Payment page for payment information.</p>]]></field>
