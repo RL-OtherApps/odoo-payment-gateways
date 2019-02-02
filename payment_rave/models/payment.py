@@ -14,21 +14,23 @@ from odoo.tools.float_utils import float_round
 _logger = logging.getLogger(__name__)
 
 
-
 class PaymentAcquirerStripe(models.Model):
     _inherit = 'payment.acquirer'
 
     provider = fields.Selection(selection_add=[('rave', 'Rave')])
-    rave_public_key = fields.Char(required_if_provider='rave', groups='base.group_user')
-    rave_secret_key = fields.Char(required_if_provider='rave', groups='base.group_user')
-    environment = fields.Char(required_if_provider='rave', groups='base.group_user')
+    rave_public_key = fields.Char(
+        required_if_provider='rave', groups='base.group_user')
+    rave_secret_key = fields.Char(
+        required_if_provider='rave', groups='base.group_user')
+    environment = fields.Char(
+        required_if_provider='rave', groups='base.group_user')
 
     @api.model
     def _get_rave_api_url(self):
         """ Rave URLs"""
         if self.environment == 'prod':
             return 'api.ravepay.co'
-        else :
+        else:
             return 'ravesandboxapi.flutterwave.com'
 
     @api.multi
@@ -40,7 +42,8 @@ class PaymentAcquirerStripe(models.Model):
             'amount': tx_values['amount'],  # Mandatory
             'currency': tx_values['currency'].name,  # Mandatory anyway
             'currency_id': tx_values['currency'].id,  # same here
-            'address_line1': tx_values.get('partner_address'),  # Any info of the partner is not mandatory
+            # Any info of the partner is not mandatory
+            'address_line1': tx_values.get('partner_address'),
             'address_city': tx_values.get('partner_city'),
             'address_country': tx_values.get('partner_country') and tx_values.get('partner_country').name or '',
             'email': tx_values.get('partner_email'),
@@ -57,7 +60,8 @@ class PaymentTransactionRave(models.Model):
     _inherit = 'payment.transaction'
 
     def _rave_verify_charge(self, data):
-        api_url_charge = 'https://%s/flwv3-pug/getpaidx/api/v2/verify' % (self.acquirer_id._get_rave_api_url())
+        api_url_charge = 'https://%s/flwv3-pug/getpaidx/api/v2/verify' % (
+            self.acquirer_id._get_rave_api_url())
         payload = {
             'SECKEY': self.acquirer_id.rave_secret_key,
             'txref': self.reference,
@@ -65,25 +69,29 @@ class PaymentTransactionRave(models.Model):
         headers = {
             'Content-Type': 'application/json',
         }
-        
-        _logger.info('_rave_verify_charge: Sending values to URL %s, values:\n%s', api_url_charge, pprint.pformat(payload))
-        r = requests.post(api_url_charge,headers=headers, data=json.dumps(payload))
+
+        _logger.info('_rave_verify_charge: Sending values to URL %s, values:\n%s',
+                     api_url_charge, pprint.pformat(payload))
+        r = requests.post(api_url_charge, headers=headers,
+                          data=json.dumps(payload))
         # res = r.json()
-        _logger.info('_rave_verify_charge: Values received:\n%s', pprint.pformat(r))
-        return self._rave_validate_tree(r.json(),data)
+        _logger.info('_rave_verify_charge: Values received:\n%s',
+                     pprint.pformat(r))
+        return self._rave_validate_tree(r.json(), data)
 
     @api.multi
     def _rave_validate_tree(self, tree, data):
         self.ensure_one()
         if self.state != 'draft':
-            _logger.info('Rave: trying to validate an already validated tx (ref %s)', self.reference)
+            _logger.info(
+                'Rave: trying to validate an already validated tx (ref %s)', self.reference)
             return True
 
         status = tree.get('status')
         amount = tree["data"]["amount"]
         currency = tree["data"]["currency"]
-        
-        if status == 'success' and amount == data["amount"] and currency == data["currency"] :
+
+        if status == 'success' and amount == data["amount"] and currency == data["currency"]:
             self.write({
                 'date': fields.datetime.now(),
                 'acquirer_reference': tree["data"]["txid"],
@@ -98,7 +106,7 @@ class PaymentTransactionRave(models.Model):
             _logger.warn(error)
             self.sudo().write({
                 'state_message': error,
-                'acquirer_reference':tree["data"]["txid"],
+                'acquirer_reference': tree["data"]["txid"],
                 'date': fields.datetime.now(),
             })
             self._set_transaction_cancel()

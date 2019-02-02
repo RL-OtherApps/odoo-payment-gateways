@@ -11,7 +11,7 @@ _logger = logging.getLogger(__name__)
 
 
 class RaveController(http.Controller):
-    
+
     @http.route(['/payment/values'], type='json', auth='public')
     def return_payment_values(self, **post):
         """ Upadate the payment values from the database"""
@@ -27,7 +27,7 @@ class RaveController(http.Controller):
         Expects the result from the user input from flwpbf-inline.js popup"""
         TX = request.env['payment.transaction']
         tx = None
-        data = post.get('data');
+        data = post.get('data')
         if post.get('tx_ref'):
             tx = TX.sudo().search([('reference', '=', post.get('tx_ref'))])
         if not tx:
@@ -46,9 +46,11 @@ class RaveController(http.Controller):
             response = tx._rave_verify_charge(data)
         else:
             response = tx._rave_verify_charge(data)
-        _logger.info('Rave: entering form_feedback with post data %s', pprint.pformat(response))
+        _logger.info('Rave: entering form_feedback with post data %s',
+                     pprint.pformat(response))
         if response:
-            request.env['payment.transaction'].sudo().with_context(lang=None).form_feedback(response, 'rave')
+            request.env['payment.transaction'].sudo().with_context(
+                lang=None).form_feedback(response, 'rave')
         # add the payment transaction into the session to let the page /payment/process to handle it
         PaymentProcessing.add_payment_transaction(tx)
         return "/payment/process"

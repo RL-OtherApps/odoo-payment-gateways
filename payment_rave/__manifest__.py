@@ -9,7 +9,7 @@
     'author': 'Flutterwave Technology Solutions',
     'website': 'https://rave.flutterwave.com/',
     'description': """Flutterwave Rave Payment Acquirer""",
-    'depends': ['payment','website'],
+    'depends': ['payment', 'website'],
     'data': [
         'views/payment_views.xml',
         'views/payment_rave_templates.xml',
